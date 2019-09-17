@@ -9,6 +9,7 @@ using Identity.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -34,22 +35,25 @@ namespace Identity
 
             services.AddDbContext<ApplicationDBContext>(options =>
                                         options.UseSqlServer(Configuration.GetConnectionString("marvinUserDBConnectionString")));
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDBContext>()
+                .AddDefaultTokenProviders();
 
             services.AddScoped<ILoginService<ApplicationUser>, EFLoginService>();
-            var connectionString = Configuration["ConnectionString"];
+            var connectionString = Configuration.GetConnectionString("marvinUserDBConnectionString");
             var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
 
-
+            
             services.AddIdentityServer(x =>
             {
                 x.IssuerUri = "null";
-
+              
             })
             .AddDeveloperSigningCredential()
             .AddAspNetIdentity<ApplicationUser>()
             .AddConfigurationStore(options =>
             {
-                options.ConfigureDbContext = builder => builder.UseSqlServer(connectionString,
+                options.ConfigureDbContext = builder => builder.UseSqlServer(connectionString, 
                     sql => sql.MigrationsAssembly(migrationsAssembly));
                 //sqlServerOptionsAction: sqlOptions =>
                 //{
@@ -60,7 +64,7 @@ namespace Identity
             })
             .AddOperationalStore(options =>
             {
-                options.ConfigureDbContext = builder => builder.UseSqlServer(connectionString,
+                options.ConfigureDbContext = builder => builder.UseSqlServer(connectionString, 
                     sql => sql.MigrationsAssembly(migrationsAssembly));
 
 
