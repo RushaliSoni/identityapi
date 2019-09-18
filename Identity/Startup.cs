@@ -93,7 +93,7 @@ namespace Identity
             app.UseIdentityServer();
 
             app.UseHttpsRedirection();
-            app.UseMvc();
+            app.UseMvcWithDefaultRoute();
         }
     }
 }
