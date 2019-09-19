@@ -54,7 +54,8 @@ namespace Identity.Quickstart.UserRegistration
             {
                 var user = new ApplicationUser
                 {
-                    UserName = model.UserName
+                    UserName = model.UserName,
+                    Email= model.Email
                     
                 };
                 var result = await _userManager.CreateAsync(user, model.Password);
