@@ -1,9 +1,9 @@
 @model LoginViewModel
 
 <div class="login-page">
-    <div class="page-header">
+    @*<div class="page-header">
         <h1>Login</h1>
-    </div>
+    </div>*@
 
     @Html.Partial("_ValidationSummary")
 
@@ -11,24 +11,27 @@
 
         @if (Model.EnableLocalLogin)
         {
-            <div class="col-sm-12">
+            <div class="col-sm-12 col-md-8 col-lg-8 col-md-offset-2 col-lg-offset-2">
                 <div class="panel panel-default">
-                    <div class="panel-heading">
+                    @*<div class="panel-heading">
                         <h3 class="panel-title">User Login</h3>
-                    </div>
+                    </div>*@
                     <div class="panel-body">
-
-                        <form asp-route="Login">
+                          <form asp-route="Login">
                             <input type="hidden" asp-for="ReturnUrl" />
 
                             <fieldset>
                                 <div class="form-group">
-                                    <label asp-for="Email"></label>
-                                    <input class="form-control"  asp-for="Email" autofocus>
+                                    <h3>User Login</h3>
+
                                 </div>
                                 <div class="form-group">
-                                    <label asp-for="Password"></label>
-                                    <input type="password" class="form-control"  asp-for="Password" autocomplete="off">
+
+                                    <input class="form-control" placeholder="Enter Email" asp-for="Email" autofocus>
+                                </div>
+                                <div class="form-group">
+
+                                    <input type="password" class="form-control" style="border:1px solid #FFC216" placeholder="Enter Password" asp-for="Password" autocomplete="off">
                                 </div>
                                 @if (Model.AllowRememberLogin)
                                 {
@@ -39,16 +42,29 @@
                                         </label>
                                     </div>
                                 }
-                                <div class="form-group">
-                                    <a asp-action="RegisterUser"
-                                       asp-controller="UserRegistration"
-                                       asp-route-returnUrl="@Model.ReturnUrl">
-                                        Register as a new User?
-                                    </a>
+                                
+                            <div class="form-group">
+                                <div class="col-sm-6 text-left">
+                                <a asp-action="RegisterUser"
+                                   asp-controller="UserRegistration"
+                                   asp-route-returnUrl="@Model.ReturnUrl">
+                                    Pending Registration?
+                                </a>
                                 </div>
+                                <div class="col-sm-6 text-right">
+                                <a asp-action="forgotpassword"
+                                   asp-controller="UserRegistration"
+                                   asp-route-returnUrl="@Model.ReturnUrl">
+                                    Forgot Password?
+                                </a>
+                                </div>
+                            </div>
+                                
+                                    
                                 <div class="form-group">
-                                    <button class="btn btn-primary" name="button" value="login">Login</button>
-                                    <button class="btn btn-default" name="button" value="cancel">Cancel</button>
+                                    <div class="text-center">
+                                        <button class="btn " name="button" value="login">Login</button>
+                                    </div>
                                 </div>
                             </fieldset>
                         </form>

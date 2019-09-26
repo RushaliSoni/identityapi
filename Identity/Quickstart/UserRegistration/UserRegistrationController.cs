@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Identity.Model;
+using Identity.Quickstart.Account;
 using Identity.Services;
+using IdentityServer4.Quickstart.UI;
 using IdentityServer4.Services;
 using IdentityServer4.Stores;
 using Microsoft.AspNetCore.Http;
@@ -92,7 +94,27 @@ namespace Identity.Quickstart.UserRegistration
 
             return RedirectToAction("index", "home");
         }
-
+        [HttpGet]
+        public IActionResult forgotpassword(string returnUrl)
+        {
+            var vm = new LoginViewModel()
+            { ReturnUrl = returnUrl };
+            return View(vm);
+        }
+        [HttpGet]
+        public IActionResult twofa(string returnUrl)
+        {
+            var vm = new LoginViewModel()
+            { ReturnUrl = returnUrl };
+            return View(vm);
+        }
+        [HttpGet]
+        public IActionResult EnableAuthenticator(string returnUrl)
+        {
+            var vm = new EnableAuthenticatorViewModel()
+            { AuthenticatorUri = returnUrl };
+            return View(vm);
+        }
         [HttpGet]
         public IActionResult Redirecting()
         {

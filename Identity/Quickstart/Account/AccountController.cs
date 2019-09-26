@@ -164,6 +164,7 @@ namespace IdentityServer4.Quickstart.UI
             };
             return View(vm);
         }
+       
 
         /// <summary>
         /// Handle logout page postback
