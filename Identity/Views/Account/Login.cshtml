@@ -1,11 +1,11 @@
-@model LoginViewModel
+@model Identity.API.ViewModels.LoginViewModel
 
 <div class="login-page">
     @*<div class="page-header">
         <h1>Login</h1>
     </div>*@
 
-    @Html.Partial("_ValidationSummary")
+    @Html.PartialAsync("_ValidationSummary")
 
     <div class="row">
 
@@ -26,12 +26,13 @@
 
                                 </div>
                                 <div class="form-group">
-
                                     <input class="form-control" placeholder="Enter Email" asp-for="Email" autofocus>
+                                    <span asp-validation-for="Email" class="text-danger"></span>
                                 </div>
                                 <div class="form-group">
 
-                                    <input type="password" class="form-control" style="border:1px solid #FFC216" placeholder="Enter Password" asp-for="Password" autocomplete="off">
+                                    <input type="password" class="form-control" placeholder="Enter Password" asp-for="Password" autocomplete="off">
+                                    <span asp-validation-for="Password" class="text-danger"></span>
                                 </div>
                                 @if (Model.AllowRememberLogin)
                                 {
@@ -46,14 +47,14 @@
                             <div class="form-group">
                                 <div class="col-sm-6 text-left">
                                 <a asp-action="RegisterUser"
-                                   asp-controller="UserRegistration"
+                                   asp-controller="Account"
                                    asp-route-returnUrl="@Model.ReturnUrl">
                                     Pending Registration?
                                 </a>
                                 </div>
                                 <div class="col-sm-6 text-right">
                                 <a asp-action="forgotpassword"
-                                   asp-controller="UserRegistration"
+                                   asp-controller="Account"
                                    asp-route-returnUrl="@Model.ReturnUrl">
                                     Forgot Password?
                                 </a>

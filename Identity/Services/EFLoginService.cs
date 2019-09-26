@@ -1,4 +1,4 @@
-﻿using Identity.Model;
+﻿using Identity.Domain.Entities;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using System;
