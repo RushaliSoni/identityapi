@@ -2,8 +2,8 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 using Identity.API.ViewModels;
+using Identity.Application.Services;
 using Identity.Domain.Entities;
-using Identity.Services;
 using IdentityModel;
 using IdentityServer4;
 using IdentityServer4.Events;
