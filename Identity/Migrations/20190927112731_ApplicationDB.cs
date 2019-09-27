@@ -15,7 +15,10 @@ namespace Identity.Migrations
                     Id = table.Column<string>(nullable: false),
                     Name = table.Column<string>(maxLength: 256, nullable: true),
                     NormalizedName = table.Column<string>(maxLength: 256, nullable: true),
-                    ConcurrencyStamp = table.Column<string>(nullable: true)
+                    ConcurrencyStamp = table.Column<string>(nullable: true),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    Description = table.Column<string>(nullable: true),
+                    IpAddress = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -40,7 +43,19 @@ namespace Identity.Migrations
                     TwoFactorEnabled = table.Column<bool>(nullable: false),
                     LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
                     LockoutEnabled = table.Column<bool>(nullable: false),
-                    AccessFailedCount = table.Column<int>(nullable: false)
+                    AccessFailedCount = table.Column<int>(nullable: false),
+                    CardNumber = table.Column<string>(nullable: true),
+                    SecurityNumber = table.Column<string>(nullable: true),
+                    Expiration = table.Column<string>(nullable: false),
+                    CardHolderName = table.Column<string>(nullable: true),
+                    CardType = table.Column<int>(nullable: false),
+                    Street = table.Column<string>(nullable: true),
+                    City = table.Column<string>(nullable: true),
+                    State = table.Column<string>(nullable: true),
+                    Country = table.Column<string>(nullable: false),
+                    ZipCode = table.Column<string>(nullable: true),
+                    Name = table.Column<string>(nullable: false),
+                    LastName = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {

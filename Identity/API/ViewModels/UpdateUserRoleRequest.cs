@@ -2,7 +2,7 @@
 
 namespace Identity.API.ViewModels
 {
-    public class AddOrUpdateOrDeleteUserRoleRequest
+    public class UpdateUserRoleRequest
     {
         public string Id { get; set; }
 
@@ -10,16 +10,18 @@ namespace Identity.API.ViewModels
         [Display(Name = "Role Name")]
         public string RoleName { get; set; }
 
-        [Required(ErrorMessage = "Operation Type is Required.")]
-        public EnAddOrRemoveRole AddOrRemoveRole { set; get; }
+        //[Required(ErrorMessage = "Operation Type is Required.")]
+        //public EnAddOrRemoveRole AddOrUpdateorDeleteRole { set; get; }
 
         [Required(ErrorMessage = "Description is Required.")]
         public string Description { get; set; }
     }
 
-    public enum EnAddOrRemoveRole
-    {
-        AddOrUpdate = 0,
-        Delete = 1
-    }
+    //public enum EnAddOrRemoveRole
+    //{
+    //    Delete = 0,
+    //    Add = 1,
+    //    update=2
+        
+    //}
 }

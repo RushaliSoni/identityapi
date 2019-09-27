@@ -1,5 +1,6 @@
 ﻿
 using Identity.API.ViewModels;
+using Identity.Application.Services;
 using Identity.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -10,14 +11,14 @@ namespace Identity.Api.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
-    public class ApplicationRoleController : ControllerBase
+    public class ApplicationRoleController : Controller
     {
-        private readonly RoleManager<ApplicationRole> _roleManager;
+        private readonly IRoleService _roleservice;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public ApplicationRoleController(RoleManager<ApplicationRole> roleManager, UserManager<ApplicationUser> userManager)
+        public ApplicationRoleController(IRoleService  roleservice, UserManager<ApplicationUser> userManager )
         {
-            _roleManager = roleManager;
+            _roleservice = roleservice;
             _userManager = userManager;
         }
 
@@ -36,7 +37,7 @@ namespace Identity.Api.Controllers
             string userName = user.UserName != null ? user.Email : user.UserName;
 
             // Find Role Using Role Name in AspNetRole Table
-            ApplicationRole applicationRole = await _roleManager.FindByNameAsync(model.ApplicationRoleName.ToUpper());
+            ApplicationRole applicationRole = await _roleservice.FindByNameAsync(model.ApplicationRoleName.ToUpper());
             //ApplicationRole applicationRole = await _roleManager.FindByIdAsync(model.ApplicationRoleId);
             IdentityResult roleResult = null;
 
@@ -61,29 +62,92 @@ namespace Identity.Api.Controllers
 
             return Ok("UnExpected Errors !!!");
         }
-
         [HttpPost]
-        [Route("AddOrUpdateOrDeleteUserRole")]
-        public async Task<IActionResult> AddOrUpdateOrDeleteUserRole([FromBody]AddOrUpdateOrDeleteUserRoleRequest model)
+        [Route("AdduserRole")]
+        public async Task<IActionResult> AdduserRole([FromBody]AddUserRoleRequest model)
         {
             if (!ModelState.IsValid)
+            {
+                return Ok(ModelState);
+            }
+            IdentityResult roleResult;
+            if (ModelState.IsValid)
+            {
+                ApplicationRole applicationRole = new ApplicationRole
+                {
+                    Name = model.RoleName,
+                    CreatedDate = DateTime.UtcNow,
+                    Description = model.Description,
+                    IpAddress = Request.HttpContext.Connection.RemoteIpAddress.ToString()
+
+                };
+                roleResult = await _roleservice.CreateAsync(applicationRole);
+                if (roleResult.Succeeded)
+                {
+                    return Ok("Role SuccessFully Added....");
+                }
+
+            }
+            return Ok("UnExpected Error");
+
+        }
+
+        [HttpPost]
+        [Route("UpdateUserRole")]
+        public async Task<IActionResult> UpdateUserRole([FromBody]UpdateUserRoleRequest model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return Ok(ModelState);
+            }
+            bool isExist = !String.IsNullOrEmpty(model.Id);
+            IdentityResult roleResult;
+
+
+            if (ModelState.IsValid)
+            {
+                ApplicationRole applicationRole = await _roleservice.FindByIdAsync(model.Id);
+                applicationRole.Name = model.RoleName;
+                applicationRole.CreatedDate = DateTime.UtcNow;
+                applicationRole.Description = model.Description;
+                applicationRole.IpAddress = Request.HttpContext.Connection.RemoteIpAddress.ToString();
+                roleResult = await _roleservice.UpdateAsync(applicationRole);
+
+                if (roleResult.Succeeded)
+                {
+                    if (isExist)
+                    {
+                        return Ok("Role SuccessFully Updated....");
+                    }
+
+                }
+               
+            }
+            return Ok("UnExpected Error");
+        }
+               
+               
+        [HttpPost]
+        [Route("DeleteUserRole")]
+        public async Task<IActionResult> DeleteUserRole([FromBody]DeleteUserRoleRequest model)
+        {
+
+           if (!ModelState.IsValid)
             {
                 return Ok(ModelState);
             }
 
             bool isExist = !String.IsNullOrEmpty(model.Id);
             IdentityResult roleResult;
-            ApplicationRole applicationRole = isExist ? await _roleManager.FindByIdAsync(model.Id) : new ApplicationRole { CreatedDate = DateTime.UtcNow };
-
-            if (model.AddOrRemoveRole == EnAddOrRemoveRole.Delete)
+            ApplicationRole applicationRole = await _roleservice.FindByIdAsync(model.Id);
+            if (ModelState.IsValid)
             {
-                if (isExist && _roleManager.FindByIdAsync(model.Id) != null)
+                if (isExist && _roleservice.FindByIdAsync(model.Id) != null)
                 {
-                    roleResult = _roleManager.DeleteAsync(applicationRole).Result;
-
+                    roleResult = _roleservice.DeleteAsync(applicationRole).Result;
                     if (roleResult.Succeeded)
                     {
-                        return Ok("Role SuccessFully Deleted....");
+                        return Ok("Role SuccessFully Deleted...."); 
                     }
                     else
                     {
@@ -91,27 +155,8 @@ namespace Identity.Api.Controllers
                     }
                 }
             }
-            else if (model.AddOrRemoveRole == EnAddOrRemoveRole.AddOrUpdate)
-            {
-                applicationRole.Name = model.RoleName.ToUpper();
-                applicationRole.Description = model.Description;
-                applicationRole.IpAddress = Request.HttpContext.Connection.RemoteIpAddress.ToString();
-                roleResult = isExist ? await _roleManager.UpdateAsync(applicationRole) : await _roleManager.CreateAsync(applicationRole);
-                if (roleResult.Succeeded)
-                {
-                    if (isExist)
-                    {
-                        return Ok("Role SuccessFully Updated....");
-                    }
-                    else
-                    {
-                        return Ok("Role SuccessFully Added....");
-                    }
-                }
-            }
+            return Ok("UnExpected Eroor!!!!");
 
-            return Ok("UnExpected Error!!!");
         }
-
     }
 }

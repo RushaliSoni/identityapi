@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Identity.Infrastructure.DbContext
 {
-    public class ApplicationDBContext : IdentityDbContext<ApplicationUser>
+    public class ApplicationDBContext : IdentityDbContext<ApplicationUser,ApplicationRole,string>
     {
         public ApplicationDBContext(DbContextOptions<ApplicationDBContext> options)
            : base(options)

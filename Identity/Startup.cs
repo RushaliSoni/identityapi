@@ -16,11 +16,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace Identity
 {
     public class Startup
-    {
+    {    //for configuration with the other files
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -32,18 +33,37 @@ namespace Identity
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-
+            // connect with database use this
             services.AddDbContext<ApplicationDBContext>(options =>
                                         options.UseSqlServer(Configuration.GetConnectionString("marvinUserDBConnectionString")));
-            services.AddIdentity<ApplicationUser, IdentityRole>()
+
+            //for identityuser's usage
+            services.AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddEntityFrameworkStores<ApplicationDBContext>()
                 .AddDefaultTokenProviders();
 
             services.AddScoped<ILoginService<ApplicationUser>, EFLoginService>();
+            services.AddScoped<IRoleService, RoleService>();
+            
+            //set connection string 
             var connectionString = Configuration.GetConnectionString("marvinUserDBConnectionString");
             var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
 
-            
+            //addd swager
+            services.AddSwaggerGen(options =>
+            {
+                options.DescribeAllEnumsAsStrings();
+
+                options.SwaggerDoc("v1", new Info
+                {
+                    Title = "Identity Server API",
+                    Version = "v1",
+                    Description = "The Identity Service HTTP API",
+                    TermsOfService = "Terms Of Service"
+                });
+            });
+
+            //  add identityserver database connection for create database
             services.AddIdentityServer(x =>
             {
                 x.IssuerUri = "null";
@@ -68,12 +88,6 @@ namespace Identity
                     sql => sql.MigrationsAssembly(migrationsAssembly));
 
 
-                //sqlServerOptionsAction: sqlOptions =>
-                //{
-                //    sqlOptions.MigrationsAssembly(migrationsAssembly);
-                //    //Configuring Connection Resiliency: https://docs.microsoft.com/en-us/ef/core/miscellaneous/connection-resiliency 
-                //    sqlOptions.EnableRetryOnFailure(maxRetryCount: 15, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
-                //});
             });
 
         }
@@ -94,6 +108,12 @@ namespace Identity
             app.UseIdentityServer();
 
             app.UseHttpsRedirection();
+            app.UseSwagger()
+              .UseSwaggerUI(c =>
+              {
+                  c.SwaggerEndpoint("/swagger/v1/swagger.json", "IdentityServer V1");
+              });
+
             app.UseMvcWithDefaultRoute();
         }
     }

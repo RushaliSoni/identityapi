@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Identity.Migrations.PersistedGrantDb
 {
     [DbContext(typeof(PersistedGrantDbContext))]
-    [Migration("20190917121251_persistedDb")]
+    [Migration("20190927113218_persistedDb")]
     partial class persistedDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

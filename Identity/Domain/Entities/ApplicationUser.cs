@@ -11,7 +11,7 @@ namespace Identity.Domain.Entities
     {
         
         public string CardNumber { get; set; }
-        [Required]
+      
         public string SecurityNumber { get; set; }
         [Required]
         [RegularExpression(@"(0[1-9]|1[0-2])\/[0-9]{2}", ErrorMessage = "Expiration should match a valid MM/YY value")]
@@ -19,8 +19,8 @@ namespace Identity.Domain.Entities
        
         public string CardHolderName { get; set; }
 
-        //public int CardType { get; set; }
-       
+        public int CardType { get; set; }
+
         public string Street { get; set; }
         
         public string City { get; set; }
