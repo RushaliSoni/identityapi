@@ -14,19 +14,17 @@ namespace Identity.Api.Controllers
     public class ApplicationRoleController : Controller
     {
         private readonly IRoleService _roleservice;
-        private readonly UserManager<ApplicationUser> _userManager;
 
-        public ApplicationRoleController(IRoleService  roleservice, UserManager<ApplicationUser> userManager )
+        public ApplicationRoleController(IRoleService  roleservice )
         {
             _roleservice = roleservice;
-            _userManager = userManager;
         }
 
         [HttpPost]
-        [Route("SetOrRemoveUserRole")]
-        public async Task<IActionResult> SetOrRemoveUserRole([FromBody]SetOrRemoveUserRoleRequest model)
+        [Route("SetUserRole")]
+        public async Task<IActionResult> SetUserRole([FromBody]SetUserRoleRequest model)
         {
-            ApplicationUser user = await _userManager.FindByEmailAsync(model.Email);
+            ApplicationUser user = await _roleservice.FindByEmailAsync(model.Email);
 
             string roleName = string.Empty;
             if (user == null)
@@ -45,26 +43,52 @@ namespace Identity.Api.Controllers
             {
                 roleName = applicationRole.Name;
 
-                if (model.SetOrRemove == EnSetRemoveRole.Set)
+                if (ModelState.IsValid)
                 {
                     // Add Role With Specific user
-                    roleResult = await _userManager.AddToRoleAsync(user, applicationRole.Name);
+                    roleResult = await _roleservice.AddToRoleAsync(user, applicationRole.Name);
                     return Ok($"SuccessFully Set Role {roleName} For User {userName}");
                 }
 
-                if (model.SetOrRemove == EnSetRemoveRole.Remove)
-                {
-                    // Remove Role With Specific user
-                    roleResult = await _userManager.RemoveFromRoleAsync(user, applicationRole.Name);
-                    return Ok($"SuccessFully Remove Role {roleName} For User {userName}");
-                }
+                
             }
 
             return Ok("UnExpected Errors !!!");
         }
         [HttpPost]
-        [Route("AdduserRole")]
-        public async Task<IActionResult> AdduserRole([FromBody]AddUserRoleRequest model)
+        [Route("RemoveUserRole")]
+        public async Task<IActionResult> RemoveUserRole([FromBody]RemoveUserRoleRequest model)
+        {
+            ApplicationUser user = await _roleservice.FindByEmailAsync(model.Email);
+
+            string roleName = string.Empty;
+            if (user == null)
+            {
+                return Ok("User Not Found....");
+            }
+
+            string userName = user.UserName != null ? user.Email : user.UserName;
+
+            // Find Role Using Role Name in AspNetRole Table
+            ApplicationRole applicationRole = await _roleservice.FindByNameAsync(model.ApplicationRoleName.ToUpper());
+            IdentityResult roleResult = null;
+
+            if (ModelState.IsValid)
+            {
+                roleName = applicationRole.Name;
+
+               
+                    // Remove Role With Specific user
+                    roleResult = await _roleservice.RemoveFromRoleAsync(user, applicationRole.Name);
+                    return Ok($"SuccessFully Remove Role {roleName} For User {userName}");
+                
+            }
+
+            return Ok("UnExpected Errors !!!");
+        }
+        [HttpPost]
+        [Route("AddRole")]
+        public async Task<IActionResult> AddRole([FromBody]AddRoleRequest model)
         {
             if (!ModelState.IsValid)
             {
@@ -93,8 +117,8 @@ namespace Identity.Api.Controllers
         }
 
         [HttpPost]
-        [Route("UpdateUserRole")]
-        public async Task<IActionResult> UpdateUserRole([FromBody]UpdateUserRoleRequest model)
+        [Route("UpdateRole")]
+        public async Task<IActionResult> UpdateRole([FromBody]UpdateRoleRequest model)
         {
             if (!ModelState.IsValid)
             {
@@ -128,8 +152,8 @@ namespace Identity.Api.Controllers
                
                
         [HttpPost]
-        [Route("DeleteUserRole")]
-        public async Task<IActionResult> DeleteUserRole([FromBody]DeleteUserRoleRequest model)
+        [Route("DeleteRole")]
+        public async Task<IActionResult> DeleteRole([FromBody]DeleteRoleRequest model)
         {
 
            if (!ModelState.IsValid)

@@ -1,10 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Identity.API.ViewModels
 {
-    public class UpdateUserRoleRequest
+    public class AddRoleRequest
     {
-        public string Id { get; set; }
+        //public string Id { get; set; }
 
         [Required(ErrorMessage = "Role is Required.")]
         [Display(Name = "Role Name")]
@@ -16,12 +20,4 @@ namespace Identity.API.ViewModels
         [Required(ErrorMessage = "Description is Required.")]
         public string Description { get; set; }
     }
-
-    //public enum EnAddOrRemoveRole
-    //{
-    //    Delete = 0,
-    //    Add = 1,
-    //    update=2
-        
-    //}
 }

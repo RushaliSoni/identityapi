@@ -44,6 +44,7 @@ namespace Identity
 
             services.AddScoped<ILoginService<ApplicationUser>, EFLoginService>();
             services.AddScoped<IRoleService, RoleService>();
+            services.AddScoped<IClaimService, ClaimService>();
             
             //set connection string 
             var connectionString = Configuration.GetConnectionString("marvinUserDBConnectionString");
@@ -75,12 +76,7 @@ namespace Identity
             {
                 options.ConfigureDbContext = builder => builder.UseSqlServer(connectionString, 
                     sql => sql.MigrationsAssembly(migrationsAssembly));
-                //sqlServerOptionsAction: sqlOptions =>
-                //{
-                //    sqlOptions.MigrationsAssembly(migrationsAssembly);
-
-                //    sqlOptions.EnableRetryOnFailure(maxRetryCount: 15, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
-                //});
+                
             })
             .AddOperationalStore(options =>
             {

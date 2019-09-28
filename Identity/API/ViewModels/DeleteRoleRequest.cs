@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Identity.API.ViewModels
 {
-    public class DeleteUserRoleRequest
+    public class DeleteRoleRequest
     {
        public string Id { get; set; }
        //public string Name { get; set; }
