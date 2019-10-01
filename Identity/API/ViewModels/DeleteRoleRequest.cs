@@ -7,7 +7,6 @@ namespace Identity.API.ViewModels
 {
     public class DeleteRoleRequest
     {
-       public string Id { get; set; }
-       //public string Name { get; set; }
+        public string RoleName { get; set; }
     }
 }

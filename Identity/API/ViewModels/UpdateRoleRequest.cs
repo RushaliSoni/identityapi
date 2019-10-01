@@ -4,7 +4,7 @@ namespace Identity.API.ViewModels
 {
     public class UpdateRoleRequest
     {
-        public string Id { get; set; }
+        //public string Id { get; set; }
 
         [Required(ErrorMessage = "Role is Required.")]
         [Display(Name = "Role Name")]

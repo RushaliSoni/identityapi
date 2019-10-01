@@ -6,13 +6,12 @@ using System.Threading.Tasks;
 
 namespace Identity.API.ViewModels
 {
-    public class DeleteClaimsRequest
+    public class DeleteRoleClaimsRequest
     {
         [Required]
-        [EmailAddress]
-        [Display(Name = "Email")]
-        public string Email { get; set; }
+        [Display(Name = "RoleName")]
+        public string RoleNmae { get; set; }
         [Required]
-        public List<ApplicationUserClaim> Claims { get; set; }
+        public List<ApplicationRoleClaim> Claims { get; set; }
     }
 }

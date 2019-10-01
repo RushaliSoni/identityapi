@@ -14,11 +14,15 @@ namespace Identity.Api.Controllers
     public class ApplicationRoleController : Controller
     {
         private readonly IRoleService _roleservice;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public ApplicationRoleController(IRoleService  roleservice )
+        public ApplicationRoleController(IRoleService  roleservice, UserManager<ApplicationUser> userManager)
         {
             _roleservice = roleservice;
+            _userManager = userManager;
         }
+
+        //AspNetUserRole Table CRUD OPeration
 
         [HttpPost]
         [Route("SetUserRole")]
@@ -47,7 +51,7 @@ namespace Identity.Api.Controllers
                 {
                     // Add Role With Specific user
                     roleResult = await _roleservice.AddToRoleAsync(user, applicationRole.Name);
-                    return Ok($"SuccessFully Set Role {roleName} For User {userName}");
+                    return Ok($"SuccessFully Set Role {roleName} For User {userName} in AspNetUserRoles Table");
                 }
 
                 
@@ -80,12 +84,51 @@ namespace Identity.Api.Controllers
                
                     // Remove Role With Specific user
                     roleResult = await _roleservice.RemoveFromRoleAsync(user, applicationRole.Name);
-                    return Ok($"SuccessFully Remove Role {roleName} For User {userName}");
+                    return Ok($"SuccessFully Remove UserRole {roleName} For User {userName} in AspNetUserRole Table ");
                 
             }
 
             return Ok("UnExpected Errors !!!");
         }
+        [HttpPost]
+        [Route("UpdateUserRole")]
+        public async Task<IActionResult> UpdateUserRole([FromBody]UpdateUserRoleRequest model)
+        {
+            
+            bool isExist = !string.IsNullOrEmpty(model.Email);
+            IdentityResult Result;
+            string roleName = string.Empty;
+
+            if (ModelState.IsValid)
+            {
+                ApplicationUser applicationUser = await _userManager.FindByEmailAsync(model.Email);
+                var UserRole = await _userManager.GetRolesAsync(applicationUser);
+                if (UserRole != null)
+                {
+                    Result = await _roleservice.RemoveFromRoleAsync(applicationUser, model.Old_ApplicationRoleName);
+                    string RoleName = applicationUser.Name;
+                    Result = await _roleservice.AddToRoleAsync(applicationUser, model.New_ApplicationRoleName);
+
+
+                    if (Result.Succeeded)
+                    {
+                       
+                            return Ok(" SuccessFully Updated  UserRole In AspNetUserRole table...." + model.Email);
+                        
+
+                    }
+                }
+                Result = await _roleservice.AddToRoleAsync(applicationUser, model.Old_ApplicationRoleName);
+            }
+
+
+            return Ok($"Faild to Update Role {roleName} for user "+ model.Email);
+
+
+        }
+
+        // AspNetRoles table CRUD Operation
+
         [HttpPost]
         [Route("AddRole")]
         public async Task<IActionResult> AddRole([FromBody]AddRoleRequest model)
@@ -124,13 +167,13 @@ namespace Identity.Api.Controllers
             {
                 return Ok(ModelState);
             }
-            bool isExist = !String.IsNullOrEmpty(model.Id);
+            bool isExist = !String.IsNullOrEmpty(model.RoleName);
             IdentityResult roleResult;
 
 
             if (ModelState.IsValid)
             {
-                ApplicationRole applicationRole = await _roleservice.FindByIdAsync(model.Id);
+                ApplicationRole applicationRole = await _roleservice.FindByNameAsync(model.RoleName);
                 applicationRole.Name = model.RoleName;
                 applicationRole.CreatedDate = DateTime.UtcNow;
                 applicationRole.Description = model.Description;
@@ -161,12 +204,12 @@ namespace Identity.Api.Controllers
                 return Ok(ModelState);
             }
 
-            bool isExist = !String.IsNullOrEmpty(model.Id);
+            bool isExist = !String.IsNullOrEmpty(model.RoleName);
             IdentityResult roleResult;
-            ApplicationRole applicationRole = await _roleservice.FindByIdAsync(model.Id);
+            ApplicationRole applicationRole = await _roleservice.FindByNameAsync(model.RoleName);
             if (ModelState.IsValid)
             {
-                if (isExist && _roleservice.FindByIdAsync(model.Id) != null)
+                if (isExist && _roleservice.FindByNameAsync(model.RoleName) != null)
                 {
                     roleResult = _roleservice.DeleteAsync(applicationRole).Result;
                     if (roleResult.Succeeded)
@@ -182,5 +225,7 @@ namespace Identity.Api.Controllers
             return Ok("UnExpected Eroor!!!!");
 
         }
+       
     }
+
 }

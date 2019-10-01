@@ -2,26 +2,23 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Identity.API.ViewModels
 {
-    public class AddClaimsRequest
+    public class AddRoleClaimsRequest
     {
         [Required]
-        [EmailAddress]
-        [Display(Name = "Email")]
-        public string Email { get; set; }
+        [Display(Name = "RoleName")]
+        public string RoleName { get; set; }
 
         [Required]
-        public List<ApplicationUserClaim> Claims { get; set; }  
-    }
+        public List<ApplicationRoleClaim> Claims { get; set; }
 
-    public class ApplicationUserClaim
+    }
+    public class ApplicationRoleClaim
     {
         public string ClaimType { get; set; }
         public string ClaimValue { get; set; }
     }
-
 }

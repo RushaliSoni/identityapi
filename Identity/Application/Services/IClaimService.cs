@@ -13,9 +13,13 @@ namespace Identity.Application.Services
     {
         Task<ApplicationUser> FindByEmailAsync(string Email);
         Task<IList<Claim>> GetClaimsAsync(ApplicationUser user);
+        Task<IList<Claim>> GetClaimsAsync(ApplicationRole user);
         Task<IdentityResult> AddClaimAsync(ApplicationUser User , Claim claim);
+        Task<IdentityResult> AddClaimAsync(ApplicationRole role , Claim claim);
         Task<IdentityResult> RemoveClaimAsync(ApplicationUser User , Claim claim);
+        Task<IdentityResult> RemoveClaimAsync(ApplicationRole role , Claim claim);
         Task<IdentityResult> ReplaceClaimAsync(ApplicationUser User , Claim claim , Claim newclaim);
+        //Task<IdentityResult> ReplaceClaimAsync(ApplicationRole role, Claim claim, Claim newclaim);
 
     }
 }
